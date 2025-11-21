@@ -26,21 +26,20 @@ class Data(BaseModel):
     hours_per_week: int = Field(..., example=40, alias="hours-per-week")
     native_country: str = Field(..., example="United-States", alias="native-country")
 
-path = None # TODO: enter the path for the saved encoder 
-encoder = load_model(path)
+project_path = r"C:\Users\stefano.petrina\OneDrive - Accenture\Documents\Formazione\Udacity\ML-FastAPI"
+encoder_path = os.path.join(project_path, "model", "encoder.pkl")
+model_path = os.path.join(project_path, "model", "model.pkl")
 
-path = None # TODO: enter the path for the saved model 
-model = load_model(path)
+encoder = load_model(encoder_path)
+model = load_model(model_path)
 
-# TODO: create a RESTful API using FastAPI
-app = None # your code here
+app = FastAPI()
 
 # TODO: create a GET on the root giving a welcome message
 @app.get("/")
 async def get_root():
     """ Say hello!"""
-    # your code here
-    pass
+    return {"message": "Hello from the API!"}
 
 
 # TODO: create a POST on a different path that does model inference
@@ -64,11 +63,13 @@ async def post_inference(data: Data):
         "sex",
         "native-country",
     ]
-    data_processed, _, _, _ = process_data(
-        # your code here
-        # use data as data input
-        # use training = False
-        # do not need to pass lb as input
+    data_final, _, _, _ = process_data(
+        data,
+        categorical_features=cat_features,
+        label=None,
+        training=False,
+        encoder=encoder,
+        lb=None
     )
-    _inference = None # your code here to predict the result using data_processed
-    return {"result": apply_label(_inference)}
+    preds = inference(model, data_final)
+    return {"result": apply_label(preds)}

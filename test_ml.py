@@ -26,3 +26,8 @@ def test_three():
     """
     # Your code here
     pass
+
+if __name__ == "__main__":
+    test_one()
+    test_two()
+    test_three()
